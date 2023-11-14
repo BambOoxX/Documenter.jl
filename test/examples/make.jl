@@ -706,8 +706,8 @@ end
 
 examples_latex_texonly_doc = if "latex_texonly" in EXAMPLE_BUILDS
     @info("Building mock package docs: LaTeXWriter/latex_texonly")
-    @quietly makedocs(
-        format = Documenter.LaTeX(platform = "none"),
+    makedocs(
+        format = Documenter.LaTeX(platform = "none", code_listings="listings"),
         sitename = "Documenter LaTeX",
         root  = examples_root,
         build = "builds/latex_texonly",
