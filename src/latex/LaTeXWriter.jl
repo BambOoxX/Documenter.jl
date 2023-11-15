@@ -135,7 +135,7 @@ function render(doc::Documenter.Document, settings::LaTeX=LaTeX())
                             if get(page.globals.meta, :IgnorePage, :none) !== :latex
                                 context.depth = depth + (isempty(title) ? 0 : 1)
                                 context.depth > depth && _println(context, header_text)
-                                latex(context, page.mdast.children; toplevel=true)
+                                latex(context, page.mdast.children; toplevel=true, settings=settings)
                             end
                         end
                     end
@@ -736,13 +736,13 @@ end
 
 function latex(io::Context, node::Node, e::MarkdownAST.Strong; settings::LaTeX=LaTeX())
     wrapinline(io, "textbf") do
-        latex(io, node.children)
+        latex(io, node.children; settings=settings)
     end
 end
 
 function latex(io::Context, node::Node, e::MarkdownAST.Emph; settings::LaTeX=LaTeX())
     wrapinline(io, "emph") do
-        latex(io, node.children)
+        latex(io, node.children; settings=settings)
     end
 end
 
@@ -814,7 +814,7 @@ function latex(io::Context, node::Node, link::Documenter.LocalLink; settings::La
     # If we're in a header, we don't want to print any \hyperlinkref commands,
     # so we handle this here.
     if io.in_header
-        latex(io, node.children)
+        latex(io, node.children; settings=settings)
         return
     end
     # This branch is the normal case, when we're not in a header.
@@ -832,7 +832,7 @@ function latex(io::Context, node::Node, link::MarkdownAST.Link; settings::LaTeX=
     # If we're in a header, we don't want to print any \hyperlinkref commands,
     # so we handle this here.
     if io.in_header
-        latex(io, node.children)
+        latex(io, node.children; settings=settings)
         return
     end
     # This branch is the normal case, when we're not in a header.
@@ -858,7 +858,7 @@ latex(io::Context, node::Node, ::Documenter.MetaNode; settings::LaTeX=LaTeX()) =
 # In the original AST, SetupNodes were just mapped to empty Markdown.MD() objects.
 latex(io::Context, node::Node, ::Documenter.SetupNode; settings::LaTeX=LaTeX()) = nothing
 
-function latex(io::Context, node::Node, value::MarkdownAST.JuliaValue)
+function latex(io::Context, node::Node, value::MarkdownAST.JuliaValue; settings::LaTeX=LaTeX())
     @warn("""
     Unexpected Julia interpolation in the Markdown. This probably means that you
     have an unbalanced or un-escaped \$ in the text.
