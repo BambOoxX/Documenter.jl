@@ -534,17 +534,15 @@ function latex(io::Context, node::Node, code::MarkdownAST.CodeBlock; settings::L
     _println(io, "\n\\end{minted}\n")
     elseif settings.code_listings == "listings"
         _print(io, "\n\\begin{lstlisting}")
-        if escape
-            _print(io, "[escapeinside=\\#\\%")
-        end
+        _print(io, escape ? "[escapeinside=\\#\\%," : "[")
         if language == "text/plain"
-            _print(io, escape ? "," : "[")
+            # _print(io, escape ? "," : "[")
             # Special-case the formatting of code outputs from Julia.
-            _println(io, "xleftmargin=-\\fboxsep,xrightmargin=-\\fboxsep,bgcolor=white,frame=single]{text}")
+            _println(io, "]")
         elseif language == "jlcon"
-            _println(io, escape ? ",language=julia, style=jlcodestyle]{" : "{", language, "}")
+            _println(io,"language=julia, style=jlcodestyle]")
         else
-            _println(io, escape ? "]{" : "{", language, "}")
+            _println(io, "]")
         end
         if escape
             _print_code_escapes_minted(io, code_code)
@@ -552,36 +550,6 @@ function latex(io::Context, node::Node, code::MarkdownAST.CodeBlock; settings::L
             _print(io, code_code)
         end
         _println(io, "\n\\end{lstlisting}\n")
-
-
-
-        if language == "text/plain"
-            _print(io, "\n\\begin{lstlisting}")
-            if escape
-                _print(io, "[escapeinside=\\#\\%")
-            end
-            _print(io, escape ? "," : "[")
-            # Special-case the formatting of code outputs from Julia.
-            _println(io, "xleftmargin=-\\fboxsep,xrightmargin=-\\fboxsep,bgcolor=white,frame=single]{text}")
-            if escape
-                _print_code_escapes_minted(io, code_code)
-            else
-                _print(io, code_code)
-            end
-            _println(io, "\n\\end{lstlisting}\n")
-        elseif language == "jlcon"
-            _print(io, "\n\\begin{lstlisting}[language=julia, style=jlcodestyle,")
-            if escape
-                _print(io, "[escapeinside=\\#\\%")
-            end
-            _println(io, escape ? "]{" : "{", language, "}")
-            if escape
-                _print_code_escapes_minted(io, code_code)
-            else
-                _print(io, code_code)
-            end
-            _println(io, "\n\\end{lstlisting}\n")
-        end
     end
     return
 end
