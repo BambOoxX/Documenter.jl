@@ -872,6 +872,26 @@ else
     nothing
 end
 
+examples_latex_showcase_doc = if "latex_showcase_listings" in EXAMPLE_BUILDS
+    @info("Building mock package docs: LaTeXWriter/latex_showcase_listings")
+    @quietly makedocs(
+        format = Documenter.LaTeX(platform = "docker", version = v"1.2.3", code_listings="listings"),
+        sitename = "Documenter LaTeX Showcase",
+        root  = examples_root,
+        build = "builds/latex_showcase_listingslatex_showcase",
+        source = "src.latex_showcase",
+        pages = ["Showcase" => ["showcase.md", "docstrings.md"]],
+        remotes = Dict(@__DIR__() => (TestRemote(), "6ef16754bc5da93f67a4323fb204c5bd3e64f336")),
+        doctest = false,
+        debug = true,
+        warnonly = [:docs_block, :cross_references],
+    )
+else
+    @info "Skipping build: LaTeXWriter/latex_showcase"
+    @debug "Controlling variables:" EXAMPLE_BUILDS get(ENV, "DOCUMENTER_TEST_EXAMPLES", nothing)
+    nothing
+end
+
 examples_latex_showcase_texonly_doc = if "latex_showcase_texonly" in EXAMPLE_BUILDS
     @info("Building mock package docs: LaTeXWriter/latex_showcase_texonly")
     @quietly makedocs(
