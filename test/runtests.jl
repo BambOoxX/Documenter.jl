@@ -72,8 +72,8 @@ end
     include("latexwriter.jl")
 
     # Deployment configurations
-    # include("deployconfig.jl")
-    # include("deploydocs.jl")
+    include("deployconfig.jl")
+    include("deploydocs.jl")
 
     # Mock package docs.
     include("examples/tests.jl")
